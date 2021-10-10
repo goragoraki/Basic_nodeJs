@@ -1,6 +1,33 @@
 var http = require('http');
 var url = require('url')
 var fs = require('fs'); // 파일 읽기
+
+function templateHTML(title, body, list) {
+    return `
+    <!doctype html>
+    <html>
+    <head>
+        <title>WEB1 - ${title}</title>
+        <meta charset = "utf-">
+    </head>
+    <body>
+        <h1><a href = "/">WEB</a></h1>
+        ${list}
+        ${body}
+    </body>
+    </html>
+    `;
+}
+
+function makeLIST(filelist) {
+    var list = '<ul>'
+    for (var i = 0; i < filelist.length; i++) {
+        list += `<li><a href = "/?id=${filelist[i]}">${filelist[i]}</a></li>`
+        }
+    list += '</ul>'
+    return list
+}
+
 var app = http.createServer(function (request, response) {
     var _url = request.url;
 
@@ -15,56 +42,18 @@ var app = http.createServer(function (request, response) {
             fs.readdir('./data', function (err, filelist) {
                 title = 'Welcome'
                 description = 'hello world web'
-                var list = '<ul>'
-                for (var i = 0; i < filelist.length; i++) {
-                    list += `<li><a href = "/?id=${filelist[i]}">${filelist[i]}</a></li>`
-                }
-                list += '</ul>'
-                var template = `
-                <!doctype html>
-                <html>
-                <head>
-                    <title>WEB1 - ${title}</title>
-                    <meta charset = "utf-">
-                </head>
-                <body>
-                    <h1><a href = "/">WEB</a></h1>
-                    ${list}
-                    <h2>${title}</h2>
-                    <p>
-                    ${description}
-                    </p>
-                </body>
-                </html>
-                `;
+                
+                var list = makeLIST(filelist)
+                var template = templateHTML(title, `<h2>${title}</h2><p>${description}</p>`, list)
+                
                 response.writeHead(200);
                 response.end(template);
             });
         } else {
             fs.readdir('./data', function (err, filelist) {
-                var list = '<ul>'
-                for (var i = 0; i < filelist.length; i++) {
-                    list += `<li><a href = "/?id=${filelist[i]}">${filelist[i]}</a></li>`
-                }
-                list += '</ul>'
+                var list = makeLIST(filelist)
                 fs.readFile(`data/${queryData.id}`, `utf-8`, function (err, description) {
-                    var template = `
-                <!doctype html>
-                <html>
-                <head>
-                    <title>WEB1 - ${title}</title>
-                    <meta charset = "utf-8">
-                </head>
-                <body>
-                    <h1><a href = "/">WEB</a></h1>
-                    ${list}
-                    <h2>${title}</h2>
-                    <p>
-                    ${description}
-                    </p>
-                </body>
-                </html>
-                `;
+                    var template = templateHTML(title, `<h2>${title}</h2><p>${description}</p>`, list)
                     response.writeHead(200);
                     response.end(template);
                 });

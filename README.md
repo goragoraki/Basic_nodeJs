@@ -5,3 +5,5 @@
 # add queryData
 
 # add readdir
+
+# add function templateHTML
