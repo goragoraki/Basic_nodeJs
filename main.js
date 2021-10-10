@@ -126,9 +126,11 @@ var app = http.createServer(function (request, response) {
             var title = post.title;
             var description = post.description;
             
-            fs.writeFile(`./data/${post.id}`, description,'utf-8' ,function (err) {
-                response.writeHead(302, { Location: `/?id=${post.id}` })
-                response.end();
+            fs.rename(`./data/${post.id}`, `./data/${title}`, function (err) {
+                fs.writeFile(`./data/${title}`, description,'utf-8' ,function (err) {
+                    response.writeHead(302, { Location: `/?id=${post.id}` })
+                    response.end();
+                })
             })
         })
     } else if (pathname === '/delete') {
