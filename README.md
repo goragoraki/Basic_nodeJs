@@ -3,3 +3,5 @@
 # create web server
 
 # add queryData
+
+# add readdir
