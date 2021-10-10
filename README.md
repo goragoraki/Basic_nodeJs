@@ -20,3 +20,5 @@
 # add delete function
 # use form tag
 # fs.unlink
+
+# first refactoring using module.exports and function in objection
