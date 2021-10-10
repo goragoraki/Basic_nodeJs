@@ -16,3 +16,7 @@
 
 # add update function
 # input type = "hidden", value = "..." 
+
+# add delete function
+# use form tag
+# fs.unlink

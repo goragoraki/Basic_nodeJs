@@ -59,8 +59,10 @@ var app = http.createServer(function (request, response) {
                     <p>
                     <a href = "/create">create</a>
                     <a href = "/update?id=${queryData.id}">update</a>
-                    <a href = "/delete">delete</a>
-                    </p>`)  
+                    <form action = "/delete_process" method = "post">
+                        <input type = "hidden" name = "id" value = "${title}">
+                        <input type = "submit" value = "delete">
+                    </form>`)  
                     response.writeHead(200);
                     response.end(template);
                 });
@@ -106,7 +108,7 @@ var app = http.createServer(function (request, response) {
                 var list = makeLIST(filelist);
                 var template = templateHTML(title, list, `
                 <form action = '/process_update' method = "post">
-                <p><input type ="hidden" name = "id" value ="${queryData.id}">
+                <p><input type ="hidden" name = "id" value ="${queryData.id}"></p>
                 <p><input type ="text" name = "title" value="${queryData.id}"></p>
                 <p><textarea name = "description">${description}</textarea></p>
                 <p><input type ="submit"></p>
@@ -133,11 +135,21 @@ var app = http.createServer(function (request, response) {
                 })
             })
         })
-    } else if (pathname === '/delete') {
-        
+    } else if (pathname === '/delete_process') {
+        var body = '';
+        request.on('data', function (data) {
+            body += data;
+        })
+        request.on('end', function (err) {
+            var post = qs.parse(body);
+            fs.unlink(`./data/${post.id}`, function (err) {
+                response.writeHead(302, { Location: '/' });
+                response.end();
+            });
+        });
     }else {
         response.writeHead(404);
-        response.end('not found')
+        response.end('not found');
     }
 });
 app.listen(3000);
