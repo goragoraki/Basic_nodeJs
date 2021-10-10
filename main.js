@@ -3,7 +3,7 @@ var url = require('url')
 var fs = require('fs'); // 파일 읽기, 쓰기
 var qs = require('querystring')
 
-function templateHTML(title, list, body) {
+function templateHTML(title, list, body, control) {
     return `
     <!doctype html>
     <html>
@@ -14,7 +14,7 @@ function templateHTML(title, list, body) {
     <body>
         <h1><a href = "/">WEB</a></h1>
         ${list}
-        <a href = "/create">create</a>
+        ${control}  
         ${body}
     </body>
     </html>
@@ -46,7 +46,7 @@ var app = http.createServer(function (request, response) {
                 description = 'hello world web'
                 
                 var list = makeLIST(filelist)
-                var template = templateHTML(title, list, `<h2>${title}</h2><p>${description}</p>`)
+                var template = templateHTML(title, list, `<h2>${title}</h2><p>${description}</p>`, '<a href = "/create">create</a>')
                 
                 response.writeHead(200);
                 response.end(template);
@@ -55,8 +55,12 @@ var app = http.createServer(function (request, response) {
             fs.readdir('./data', function (err, filelist) {
                 fs.readFile(`data/${queryData.id}`, `utf-8`, function (err, description) {
                     var list = makeLIST(filelist)
-                    var template = templateHTML(title, list, `<h2>${title}</h2><p>${description}</p>`)
-                    
+                    var template = templateHTML(title, list, `<h2>${title}</h2><p>${description}</p>`, `
+                    <p>
+                    <a href = "/create">create</a>
+                    <a href = "/update?id=${queryData.id}">update</a>
+                    <a href = "/delete">delete</a>
+                    </p>`)  
                     response.writeHead(200);
                     response.end(template);
                 });
@@ -67,12 +71,12 @@ var app = http.createServer(function (request, response) {
             var title = `Create`
             var list = makeLIST(filelist);
             var template = templateHTML(title, list, `
-            <form action = "http://localhost:3000/process_create" method= "post">
+            <form action = "/process_create" method= "post">
             <p><input type = "text" name = "title" placeholder="title"></p>
             <p><textarea name = "description" placeholder="description"></textarea></p>
             <p><input type = "submit"></p>
             </form>
-            `)
+            `,'')
             response.writeHead(200);
             response.end(template)
         })
@@ -95,7 +99,41 @@ var app = http.createServer(function (request, response) {
                 response.end();
             })  
         })  
-    } else {
+    } else if (pathname === '/update') {
+        fs.readdir(`./data`, function (err, filelist) {
+            fs.readFile(`./data/${queryData.id}`, 'utf-8', function (err, description) {
+                var title = 'Update';
+                var list = makeLIST(filelist);
+                var template = templateHTML(title, list, `
+                <form action = '/process_update' method = "post">
+                <p><input type ="hidden" name = "id" value ="${queryData.id}">
+                <p><input type ="text" name = "title" value="${queryData.id}"></p>
+                <p><textarea name = "description">${description}</textarea></p>
+                <p><input type ="submit"></p>
+                </form>
+                `,'<a href = "/create">create</a>')
+                response.writeHead(200);
+                response.end(template);
+            })
+        })
+    } else if (pathname === '/process_update') {
+        var body = '';
+        request.on('data', function (data) {
+            body += data;
+        });
+        request.on('end', function () {
+            var post = qs.parse(body);
+            var title = post.title;
+            var description = post.description;
+            
+            fs.writeFile(`./data/${post.id}`, description,'utf-8' ,function (err) {
+                response.writeHead(302, { Location: `/?id=${post.id}` })
+                response.end();
+            })
+        })
+    } else if (pathname === '/delete') {
+        
+    }else {
         response.writeHead(404);
         response.end('not found')
     }
