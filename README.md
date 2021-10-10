@@ -9,3 +9,6 @@
 # add function templateHTML and makeLIST
 
 # add form
+
+# add create function (request.on('data'),request.on('end'))
+# require('querystring'), qs.parse(data), fs.writeFile
