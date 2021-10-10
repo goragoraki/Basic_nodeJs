@@ -6,4 +6,4 @@
 
 # add readdir
 
-# add function templateHTML
+# add function templateHTML and makeLIST
