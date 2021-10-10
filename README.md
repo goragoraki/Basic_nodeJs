@@ -7,3 +7,5 @@
 # add readdir
 
 # add function templateHTML and makeLIST
+
+# add form
