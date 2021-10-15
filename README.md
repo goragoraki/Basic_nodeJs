@@ -26,3 +26,6 @@ first refactoring using module.exports and function in objection
 #EXPRESS
 
 app.get, app.listen
+
+'경로/:id/:web' req.parms.id, req.parms.web
+

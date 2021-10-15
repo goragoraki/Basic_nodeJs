@@ -1,9 +1,37 @@
 const express = require('express');
+const fs = require('fs');
+const template = require('./lib/template.js')
 const app = express();
 
 app.get('/', (req, res) => {
-    res.send("hello world")
+    fs.readdir('./data', function (err, filelist) {
+        title = 'Welcome'
+        description = 'hello world web'
+        
+        var list = template.list(filelist)
+        var html = template.html(title, list, `<h2>${title}</h2><p>${description}</p>`, '<a href = "/create">create</a>')
+        
+        res.send(html)
+    });
 })
+
+app.get('/page/:pageId/', (req, res) => {
+    fs.readdir('./data', function (err, filelist) {
+        fs.readFile(`data/${req.params.pageId}`, `utf-8`, function (err, description) {
+            var title = req.params.pageId
+            var list = template.list(filelist)
+            var html = template.html(title, list, `<h2>${title}</h2><p>${description}</p>`, `
+            <p>
+            <a href = "/create">create</a>
+            <a href = "/update?id=${title}">update</a>
+            <form action = "/delete_process" method = "post">
+                <input type = "hidden" name = "id" value = "${title}">
+                <input type = "submit" value = "delete">
+            </form>`);
+            res.send(html);
+        });
+    });
+});
 
 app.listen(3000, () => {
     console.log("listening on port 3000");
