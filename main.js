@@ -1,9 +1,19 @@
-var http = require('http');
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+    res.send("hello world")
+})
+
+app.listen(3000, () => {
+    console.log("listening on port 3000");
+});
+
+/*var http = require('http');
 var url = require('url')
 var fs = require('fs'); // 파일 읽기, 쓰기
 var qs = require('querystring')
 var template = require('./lib/template.js')
-
 
 var app = http.createServer(function (request, response) {
     var _url = request.url;
@@ -127,4 +137,4 @@ var app = http.createServer(function (request, response) {
         response.end('not found');
     }
 });
-app.listen(3000);
+app.listen(3000);*/

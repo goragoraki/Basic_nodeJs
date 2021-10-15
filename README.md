@@ -1,24 +1,28 @@
 # Basic_nodeJs
 
-# create web server
+create web server
 
-# add queryData
+add queryData
 
-# add readdir
+add readdir
 
-# add function templateHTML and makeLIST
+add function templateHTML and makeLIST
 
-# add form
+add form
 
-# add create function (request.on('data'),request.on('end'))
-# require('querystring'), qs.parse(data), fs.writeFile
-# placeholder
+add create function (request.on('data'),request.on('end'))
+require('querystring'), qs.parse(data), fs.writeFile
+placeholder
 
-# add update function
-# input type = "hidden", value = "..." 
+add update function
+input type = "hidden", value = "..." 
 
-# add delete function
-# use form tag
-# fs.unlink
+add delete function
+use form tag
+fs.unlink
 
-# first refactoring using module.exports and function in objection
+first refactoring using module.exports and function in objection
+
+#EXPRESS
+
+app.get, app.listen
