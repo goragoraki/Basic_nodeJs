@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const template = require('./lib/template.js')
 const app = express();
+const qs = require('querystring')
 
 app.get('/', (req, res) => {
     fs.readdir('./data', function (err, filelist) {
@@ -32,6 +33,37 @@ app.get('/page/:pageId/', (req, res) => {
         });
     });
 });
+
+app.get('/create', (req, res) => {
+    fs.readdir('./data', (err, filelist) => {
+        var title = 'create';
+        var list = template.list(filelist);
+        var html = template.html(title, list, `
+        <form action = "/process_create" method = "post">
+        <p><input type = "text" name = title placeholder = "title"></p>
+        <p><textarea name = description placeholder = "description"></textarea></p>
+        <p><input type = "submit"></p>
+        </form>
+        `,'<a href = "/update">update</a>');
+        res.send(html)
+    })
+})
+
+app.post('/process_create', (req, res) => {
+    var body = '';
+    req.on('data', (data) => {
+        body += data;
+    });
+
+    req.on('end', () => {
+        var post = qs.parse(body)
+        var title = post.title;
+        var description = post.description;
+        fs.writeFile(`./data/${title}`, description, (err) => {
+            res.redirect(`/page/${title}`);
+        })
+    })
+})
 
 app.listen(3000, () => {
     console.log("listening on port 3000");

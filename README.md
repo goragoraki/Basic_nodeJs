@@ -29,3 +29,5 @@ app.get, app.listen
 
 '경로/:id/:web' req.parms.id, req.parms.web
 
+add create function
+app.post req.on('data'), req.on('end') 
