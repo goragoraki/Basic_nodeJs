@@ -31,3 +31,6 @@ app.get, app.listen
 
 add create function
 app.post req.on('data'), req.on('end') 
+
+add update function
+fs.rename('','',() =>)

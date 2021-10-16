@@ -24,7 +24,7 @@ app.get('/page/:pageId/', (req, res) => {
             var html = template.html(title, list, `<h2>${title}</h2><p>${description}</p>`, `
             <p>
             <a href = "/create">create</a>
-            <a href = "/update?id=${title}">update</a>
+            <a href = "/update/${title}">update</a>
             <form action = "/delete_process" method = "post">
                 <input type = "hidden" name = "id" value = "${title}">
                 <input type = "submit" value = "delete">
@@ -61,6 +61,46 @@ app.post('/process_create', (req, res) => {
         var description = post.description;
         fs.writeFile(`./data/${title}`, description, (err) => {
             res.redirect(`/page/${title}`);
+        })
+    })
+})
+
+app.get(`/update/:pageId`, (req, res) => {
+    fs.readdir('./data', (err, filelist) => {
+        fs.readFile(`./data/${req.params.pageId}`, 'utf-8', (err, description) => {
+            var title = "Update";
+            var id = req.params.pageId;
+            var list = template.list(filelist);
+            var html = template.html(title, list, `
+            <form action = "/process_update" method = "post">
+                <input type = "hidden" name = "id" value = "${id}">
+                <p><input type = "text" name = "title" value = "${id}"></p>
+                <p><textarea name = "description" >${description}</textarea></p>
+                <p><input type = "submit"></p>
+            </form>
+            `
+            , `<a href = "/create">create</a>`)
+            res.send(html);
+        })
+    })
+})
+
+app.post(`/process_update`, (req, res) => {
+    var body = '';
+    req.on('data', (data) => {
+        body += data;
+    })
+
+    req.on('end', () => {
+        var post = qs.parse(body);
+        var id = post.id;
+        var title = post.title;
+        var description = post.description;
+
+        fs.rename(`./data/${id}`, `./data/${title}`, (err) => {
+            fs.writeFile(`./data/${title}`, description, 'utf-8', (err) => {
+                res.redirect(`/page/${title}`)
+            })
         })
     })
 })
