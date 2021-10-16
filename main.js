@@ -25,9 +25,9 @@ app.get('/page/:pageId/', (req, res) => {
             <p>
             <a href = "/create">create</a>
             <a href = "/update/${title}">update</a>
-            <form action = "/delete_process" method = "post">
+            <form action = "/process_delete" method = "post" onsubmit = "return confirm('정말 삭제하시겠습니까?')">
                 <input type = "hidden" name = "id" value = "${title}">
-                <input type = "submit" value = "delete">
+                <input type = "submit" value = "delete" >
             </form>`);
             res.send(html);
         });
@@ -101,6 +101,20 @@ app.post(`/process_update`, (req, res) => {
             fs.writeFile(`./data/${title}`, description, 'utf-8', (err) => {
                 res.redirect(`/page/${title}`)
             })
+        })
+    })
+})
+
+app.post('/process_delete', (req, res) => {
+    var body = '';
+    req.on('data', (data) => {
+        body += data;
+    })
+    req.on('end', () => {
+        var post = qs.parse(body);
+        var id = post.id;
+        fs.unlink(`./data/${id}`, (err) => {
+            res.redirect('/');
         })
     })
 })
